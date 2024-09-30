@@ -1,0 +1,43 @@
+.hero-section {
+  background: linear-gradient(
+    135deg,
+    #38003c 0%,
+    #38003c 25%,
+    #00ff85 50%,
+    #04f5ff 75%,
+    #e90052 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  color: #fff;
+  padding: 50px 20px;
+  text-align: center;
+  height: 90vh;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.hero-title {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.hero-description {
+  font-size: 1.25rem;
+  margin-bottom: 30px;
+}
+
+button {
+  background-color: #d40000; /* Button color */
+  border: none;
+}
