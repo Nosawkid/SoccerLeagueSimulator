@@ -1,6 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { premierLeagueTeams } from "../assets/data/Teams";
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Modal,
+  Row,
+  Table,
+} from "react-bootstrap";
 import "../assets/css/Standings.css";
 import { Link } from "react-router-dom";
 import FixtureContext from "../contexts/FixtureContext";
@@ -8,6 +16,35 @@ import FixtureContext from "../contexts/FixtureContext";
 const Standings = () => {
   const [teams, setTeams] = useState([]);
   const { fixtures, setFixtures } = useContext(FixtureContext);
+  const [leagueSimulated, setLeagueSimulated] = useState(false);
+  const [modalShow, setModalShow] = useState(false);
+  const [winner, setWinner] = useState("");
+  const [results, setResults] = useState([]);
+
+  function MyVerticallyCenteredModal(props) {
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Simulated Result
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h4>Title Winner:</h4>
+          <p className="fw-bold fs-3"> {winner} 🎉</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={props.onHide}>Close</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+
   const shuffleArray = (arr) => {
     for (let i = arr.length - 1; i > 0; i--) {
       const rand = Math.floor(Math.random() * (i + 1));
@@ -34,6 +71,8 @@ const Standings = () => {
       el.goalsScored = 0;
       el.goalsConceded = 0;
       el.goalDifference = 0;
+      setLeagueSimulated(false);
+      setResults([]);
     });
     teams.sort((a, b) => {
       if (a.teamName < b.teamName) {
@@ -75,31 +114,44 @@ const Standings = () => {
   function determineMatchResult(teamOne, teamTwo) {
     const teamOneScore = Math.floor(Math.random() * 5);
     const teamTwoScore = Math.floor(Math.random() * 5);
-
+    const result = {};
     teamOne.matchesPlayed++;
     teamOne.goalsScored += teamOneScore;
     teamOne.goalsConceded += teamTwoScore;
     teamOne.goalDifference = teamOne.goalsScored - teamOne.goalsConceded;
 
     teamTwo.matchesPlayed++;
-    teamTwo.goalsScored += teamOneScore;
-    teamTwo.goalsConceded += teamTwoScore;
-    teamTwo.goalDifference = teamOne.goalsScored - teamOne.goalsConceded;
+    teamTwo.goalsScored += teamTwoScore;
+    teamTwo.goalsConceded += teamOneScore;
+    teamTwo.goalDifference = teamTwo.goalsScored - teamTwo.goalsConceded;
 
     if (teamOneScore > teamTwoScore) {
       teamOne.points += 3;
       teamOne.wins += 1;
       teamTwo.loses += 1;
+      result.winner = teamOne.teamName;
+      result.winnerScore = teamOneScore;
+      result.loser = teamTwo.teamName;
+      result.loserScore = teamTwoScore;
     } else if (teamTwoScore > teamOneScore) {
       teamTwo.points += 3;
       teamTwo.wins += 1;
       teamOne.loses += 1;
+      result.winner = teamTwo.teamName;
+      result.winnerScore = teamTwoScore;
+      result.loser = teamOne.teamName;
+      result.loserScore = teamOneScore;
     } else {
       teamOne.points++;
       teamTwo.points++;
       teamOne.draws++;
       teamTwo.draws++;
+      result.winner = teamTwo.teamName;
+      result.winnerScore = teamTwoScore;
+      result.loser = teamOne.teamName;
+      result.loserScore = teamOneScore;
     }
+    results.push(result);
   }
 
   const simulateLeage = () => {
@@ -113,6 +165,10 @@ const Standings = () => {
       return b.points - a.points;
     });
     setTeams([...teams]);
+    setLeagueSimulated(true);
+    setModalShow(true);
+    setWinner(teams[0].teamName);
+    setResults([...results]);
   };
 
   useEffect(() => {
@@ -127,18 +183,18 @@ const Standings = () => {
               onClick={() => {
                 if (fixtures.length == 0) {
                   generateFixture();
-                } else if (teams[0].matchesPlayed != 38) {
+                } else if (!leagueSimulated) {
                   simulateLeage();
-                } else {
+                } else if (leagueSimulated) {
                   clearArray();
                 }
               }}
             >
               {fixtures.length === 0
                 ? "Generate Fixture"
-                : teams[0].matchesPlayed != 38
+                : !leagueSimulated
                 ? "Simulate League"
-                : "Try Again"}
+                : leagueSimulated && "Try Again"}
             </Button>
           </Col>
 
@@ -178,6 +234,37 @@ const Standings = () => {
             ))}
           </tbody>
         </Table>
+        {results.length > 0 &&
+          results.map((el, idx) => (
+            <Card key={idx} className="mt-2">
+              <Card.Header>
+                Match No {idx + 1} Result:&nbsp;
+                <p className="fw-bold">
+                  {el.winnerScore > el.loserScore
+                    ? `Winner: ${el.winner}`
+                    : "Match Drawn"}
+                </p>
+              </Card.Header>
+              <Card.Body>
+                <blockquote className="blockquote"></blockquote>
+
+                <div>
+                  <p>
+                    Winner: {el.winner} - {el.winnerScore}
+                  </p>
+                  <p>
+                    {" "}
+                    Loser: {el.loser} - {el.loserScore}
+                  </p>
+                </div>
+              </Card.Body>
+            </Card>
+          ))}
+
+        <MyVerticallyCenteredModal
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+        />
       </Container>
     </div>
   );
