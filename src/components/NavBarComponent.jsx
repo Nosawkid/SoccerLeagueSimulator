@@ -1,5 +1,5 @@
 import { Container, Navbar } from "react-bootstrap";
-import PremPngLogo from "/assets/images/PremierLeagueLogoPNG.png";
+import PremPngLogo from "../assets/images/PremierLeagueLogoPNG.png";
 import { Link } from "react-router-dom";
 
 const NavBarComponent = () => {
