@@ -78,9 +78,6 @@ const Standings = () => {
       el.goalsScored = 0;
       el.goalsConceded = 0;
       el.goalDifference = 0;
-      setLeagueSimulated(false);
-      setResults([]);
-      setIsFixtureGenerated(false);
     });
     teams.sort((a, b) => {
       if (a.teamName < b.teamName) {
@@ -93,6 +90,9 @@ const Standings = () => {
     });
     setTeams([...teams]);
     setFixtures([]);
+    setLeagueSimulated(false);
+    setResults([]);
+    setIsFixtureGenerated(false);
   }
 
   const generateFixture = () => {
