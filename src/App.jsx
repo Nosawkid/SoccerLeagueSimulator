@@ -17,7 +17,10 @@ const router = createBrowserRouter(
       <Route path="/standings" element={<Standings />} />
       <Route path="/fixtures" element={<Fixtures />} />
     </Route>
-  )
+  ),
+  {
+    basename: "/SoccerLeagueSimulator",
+  }
 );
 
 const App = () => {
