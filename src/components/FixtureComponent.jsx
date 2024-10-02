@@ -21,26 +21,32 @@ const FixtureComponent = () => {
           </Col>
         </Row>
         <Row>
-          <Table responsive hover>
-            <thead>
-              <tr>
-                <td>Match No</td>
-                <td>Team One</td>
-                <td></td>
-                <td>Teeam Two</td>
-              </tr>
-            </thead>
-            <tbody>
-              {fixtures.map((el, idx) => (
-                <tr key={idx}>
-                  <td>{idx + 1}</td>
-                  <td>{el.teamOne.teamName}</td>
-                  <td>V/S</td>
-                  <td>{el.teamTwo.teamName}</td>
+          {fixtures.length === 0 ? (
+            <h1 className="mt-5 text-center text-danger">
+              Please Generate a fixture and visit again
+            </h1>
+          ) : (
+            <Table responsive hover>
+              <thead>
+                <tr>
+                  <td>Match No</td>
+                  <td>Team One</td>
+                  <td></td>
+                  <td>Teeam Two</td>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {fixtures.map((el, idx) => (
+                  <tr key={idx}>
+                    <td>{idx + 1}</td>
+                    <td>{el.teamOne.teamName}</td>
+                    <td>V/S</td>
+                    <td>{el.teamTwo.teamName}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
         </Row>
       </Container>
     </div>

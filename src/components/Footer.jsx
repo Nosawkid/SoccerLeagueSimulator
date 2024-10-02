@@ -1,4 +1,5 @@
 import { Container, Row, Col } from "react-bootstrap";
+import BuyMeACoffe from "./BuyMeACoffee";
 
 const Footer = () => {
   return (
@@ -10,6 +11,7 @@ const Footer = () => {
               Premier League Simulator &copy; {new Date().getFullYear()}
             </p>
             <small>Created for educational purposes</small>
+            <BuyMeACoffe />
           </Col>
         </Row>
       </Container>

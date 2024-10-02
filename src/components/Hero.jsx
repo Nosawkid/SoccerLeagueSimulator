@@ -16,6 +16,7 @@ const Hero = () => {
               s boredom. This project has nothing to do with real-world
               scenarios.
             </p>
+
             <Button variant="primary" size="lg">
               <Link
                 className="text-decoration-none text-white"

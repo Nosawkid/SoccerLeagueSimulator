@@ -55,6 +55,13 @@ const Standings = () => {
     return arr;
   };
 
+  const scrollToResults = () => {
+    const resultsSection = document.getElementById("results");
+    if (resultsSection) {
+      resultsSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   const rotateArray = (arr) => {
     const lastElement = arr.pop();
     arr.unshift(lastElement);
@@ -73,6 +80,7 @@ const Standings = () => {
       el.goalDifference = 0;
       setLeagueSimulated(false);
       setResults([]);
+      setIsFixtureGenerated(false);
     });
     teams.sort((a, b) => {
       if (a.teamName < b.teamName) {
@@ -177,7 +185,7 @@ const Standings = () => {
   return (
     <div>
       <Container>
-        <Row className="mt-2">
+        <Row className="mt-3">
           <Col>
             <Button
               onClick={() => {
@@ -198,68 +206,88 @@ const Standings = () => {
             </Button>
           </Col>
 
+          {leagueSimulated && (
+            <Col>
+              <Button onClick={scrollToResults}>View Match Results</Button>
+            </Col>
+          )}
           <Col>
             <Link to={"/fixtures"}>
               <Button>View Fixtures</Button>
             </Link>
           </Col>
         </Row>
-        <Table responsive hover className="mt-5">
-          <thead>
-            <tr>
-              <th>Club</th>
-              <th>MP</th>
-              <th>W</th>
-              <th>D</th>
-              <th>L</th>
-              <th className="d-none d-sm-table-cell">GF</th>
-              <th className="d-none d-sm-table-cell">GA</th>
-              <th className="d-none d-sm-table-cell">GD</th>
-              <th>Pts</th>
-            </tr>
-          </thead>
-          <tbody className="table-body">
-            {teams.map((el, idx) => (
-              <tr key={idx}>
-                <td className="text-sm">{idx + 1 + " " + " " + el.teamName}</td>
-                <td className="text-sm">{el.matchesPlayed}</td>
-                <td className="text-sm d-none d-sm-table-cell">{el.wins}</td>
-                <td className="text-sm d-none d-sm-table-cell">{el.draws}</td>
-                <td className="text-sm d-none d-sm-table-cell">{el.loses}</td>
-                <td className="text-sm">{el.goalsScored}</td>
-                <td className="text-sm">{el.goalsConceded}</td>
-                <td className="text-sm">{el.goalDifference}</td>
-                <td className="text-sm">{el.points}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-        {results.length > 0 &&
-          results.map((el, idx) => (
-            <Card key={idx} className="mt-2">
-              <Card.Header>
-                Match No {idx + 1} Result:&nbsp;
-                <p className="fw-bold">
-                  {el.winnerScore > el.loserScore
-                    ? `Winner: ${el.winner}`
-                    : "Match Drawn"}
-                </p>
-              </Card.Header>
-              <Card.Body>
-                <blockquote className="blockquote"></blockquote>
 
-                <div>
-                  <p>
-                    Winner: {el.winner} - {el.winnerScore}
+        <Row>
+          <Col>
+            <Table responsive hover className="mt-5">
+              <thead>
+                <tr>
+                  <th>Club</th>
+                  <th>MP</th>
+                  <th>W</th>
+                  <th>D</th>
+                  <th>L</th>
+                  <th className="d-none d-sm-table-cell">GF</th>
+                  <th className="d-none d-sm-table-cell">GA</th>
+                  <th className="d-none d-sm-table-cell">GD</th>
+                  <th>Pts</th>
+                </tr>
+              </thead>
+              <tbody className="table-body">
+                {teams.map((el, idx) => (
+                  <tr key={idx}>
+                    <td className="text-sm">
+                      {idx + 1 + " " + " " + el.teamName}
+                    </td>
+                    <td className="text-sm">{el.matchesPlayed}</td>
+                    <td className="text-sm d-none d-sm-table-cell">
+                      {el.wins}
+                    </td>
+                    <td className="text-sm d-none d-sm-table-cell">
+                      {el.draws}
+                    </td>
+                    <td className="text-sm d-none d-sm-table-cell">
+                      {el.loses}
+                    </td>
+                    <td className="text-sm">{el.goalsScored}</td>
+                    <td className="text-sm">{el.goalsConceded}</td>
+                    <td className="text-sm">{el.goalDifference}</td>
+                    <td className="text-sm">{el.points}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
+        <Container id="results">
+          {results.length > 0 &&
+            results.map((el, idx) => (
+              <Card key={idx} className="mt-2">
+                <Card.Header>
+                  Match No {idx + 1} Result:&nbsp;
+                  <p className="fw-bold">
+                    {el.winnerScore > el.loserScore
+                      ? `Winner: ${el.winner}`
+                      : "Match Drawn"}
                   </p>
-                  <p>
-                    {" "}
-                    Loser: {el.loser} - {el.loserScore}
-                  </p>
-                </div>
-              </Card.Body>
-            </Card>
-          ))}
+                </Card.Header>
+                <Card.Body>
+                  <blockquote className="blockquote"></blockquote>
+
+                  <div>
+                    <p>
+                      Winner: {el.winner} - {el.winnerScore}
+                    </p>
+                    <p>
+                      {" "}
+                      Loser: {el.loser} - {el.loserScore}
+                    </p>
+                  </div>
+                </Card.Body>
+              </Card>
+            ))}
+        </Container>
 
         <MyVerticallyCenteredModal
           show={modalShow}
